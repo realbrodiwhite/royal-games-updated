@@ -1,0 +1,20 @@
+// File path: /royalgames-main/src/features/game/Game.scss
+
+// Import variables from the main variables file
+@import '../../variables.scss';
+
+// Main Game container styles
+.Game {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+
+  // Styles for the game canvas
+  canvas {
+    display: block;
+    margin: 0 auto;
+  }
+}
