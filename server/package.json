@@ -1,0 +1,21 @@
+{
+  "name": "royalgames-server",
+  "version": "1.2.9",
+  "description": "the server for royal games",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "realbrodiwhite <brodiwhite951@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0",
+    "md5": "^2.3.0",
+    "socket.io": "^4.6.0",
+    "sqlite3": "^5.1.7",
+    "uuid": "^10.0.0",
+    "express-rate-limit": "^7.4.0"
+  }
+}
