@@ -1,0 +1,56 @@
+// File path: /royalgames-main/src/features/game-list/GameList.scss
+
+// Import variables from the main variables file
+@import '../../variables.scss';
+
+// Main GameList container styles
+.GameList {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  // Styles for the list of games
+  .list {
+    display: flex;
+
+    // Individual game item styles
+    .game {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 35px;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: $component-background-color;
+      box-shadow: $component-box-shadow;
+
+      // Game logo styles
+      .logo {
+        height: 70px;
+      }
+
+      // Game title styles
+      span {
+        margin-top: 15px;
+        font-weight: bold;
+      }
+
+      // Play button styles
+      .btn-play {
+        text-decoration: none;
+        width: 150px;
+        margin-top: 10px;
+        padding: 10px 0;
+        border-radius: 4px;
+        background-color: $button-background-color;
+        text-align: center;
+        font-weight: bold;
+        color: $button-text-color;
+        box-shadow: $button-box-shadow;
+        cursor: pointer;
+      }
+    }
+  }
+}

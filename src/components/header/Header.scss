@@ -1,0 +1,115 @@
+// File path: /royalgames-main/src/features/header/Header.scss
+
+// Import variables from the main variables file
+@import '../../variables.scss';
+
+// Main Header container styles
+.Header {
+  width: calc(100% - 20px - 20px); // Full width minus padding
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+
+  // Brand section styles
+  .brand {
+    // Logo styles
+    .logo {
+      color: $primary-color;
+    }
+
+    // Brand name styles
+    .name {
+      margin-left: 5px;
+      font-weight: bold;
+      font-size: 22px;
+      color: $primary-color;
+    }
+  }
+
+  // Menu section styles
+  .menu {
+    display: flex;
+    align-items: center;
+
+    // Account button styles
+    .account {
+      .btn-toggle-account-menu {
+        outline: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 20px;
+        background-color: $component-background-color;
+        color: $component-text-color;
+        cursor: pointer;
+        box-shadow: $component-box-shadow;
+
+        // Username text styles
+        span {
+          margin-left: 5px;
+          font-size: 16px;
+        }
+      }
+    }
+
+    // Settings button styles
+    .btn-settings {
+      outline: none;
+      border: none;
+      width: 45px;
+      height: 45px;
+      margin-left: 20px;
+      border-radius: 50%;
+      background-color: $component-background-color;
+      color: $component-text-color;
+      cursor: pointer;
+      box-shadow: $component-box-shadow;
+      transition: transform 250ms;
+
+      // Hover effect for settings button
+      &:hover {
+        transform: rotate(30deg);
+      }
+    }
+  }
+
+  // Balance display styles
+  .balance {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: $component-background-color;
+    box-shadow: $component-box-shadow;
+    color: $component-text-color;
+
+    // Balance label styles
+    .label {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    // Balance value styles
+    .value {
+      margin-top: 3px;
+      font-weight: bold;
+    }
+  }
+}
+
+// Media query for smaller screens
+@media screen and (max-width: 374px) {
+  .Header {
+    flex-direction: column;
+
+    // Adjust menu positioning for small screens
+    .menu {
+      margin-top: 20px;
+    }
+  }
+}
