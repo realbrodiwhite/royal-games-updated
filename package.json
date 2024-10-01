@@ -17,7 +17,7 @@
     "ajv": "^8.17.1",
     "animejs": "^3.2.2",
     "axios": "^1.7.7",
-    "framer-motion": "^11.8.0",
+    "framer-motion": "^11.9.0",
     "gsap": "^3.12.5",
     "pixi.js": "^8.4.1",
     "react": "^18.3.1",
