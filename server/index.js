@@ -1,7 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const { v1: uuidv1 } = require('uuid');
 const express = require('express');
-const rateLimit = require('express-rate-limit');
 const http = require('http');
 const SocketIo = require('socket.io');
 const userRoutes = require('./routes/user');
@@ -11,15 +10,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Replace secr
 const { createUser, getUser, updateBalance, updateGamestate } = require('./models/user');
 
 const app = express();
-
-// Rate limiter configuration
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
-
-// Apply rate limiter to all requests
-app.use(limiter);
 const server = http.createServer(app);
 const io = new SocketIo.Server(server, {
   cors: {
