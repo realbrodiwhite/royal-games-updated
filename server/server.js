@@ -28,7 +28,7 @@ class Server {
     const SocketIo = require("socket.io");
     const io = new SocketIo.Server(server, {
       cors: {
-        origin: "https://royalgames-client.replit.app", // Allow connections from this origin
+        origin: "https://rgserver.vercel.com", // Allow connections from this origin
       },
     });
 
