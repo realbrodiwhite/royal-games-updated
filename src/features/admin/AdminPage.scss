@@ -1,0 +1,48 @@
+@import '../../variables.scss';
+
+.AdminPage {
+  padding: 20px;
+  background-color: $component-background-color;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: $primary-color;
+      color: $button-text-color;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #ddd;
+    }
+
+    button {
+      padding: 5px 10px;
+      margin-right: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: $primary-color;
+      color: $button-text-color;
+
+      &:last-child {
+        background-color: #f44336;
+      }
+    }
+  }
+}

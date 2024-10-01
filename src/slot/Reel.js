@@ -1,9 +1,6 @@
-// File path: /royalgames-main/src/features/slot/Reel.js
-
 import * as PIXI from 'pixi.js';
 import anime from 'animejs';
 
-// Reel constructor function
 const Reel = function({
   positions,
   spinValues,
@@ -15,7 +12,6 @@ const Reel = function({
   maskPaddingX,
   maskPaddingY,
 }) {
-  // Initialize properties
   this.positions = positions;
   this.values = [];
   this._spinValues = spinValues.slice();
@@ -37,10 +33,8 @@ const Reel = function({
   this.maskPaddingY = maskPaddingY || 0;
   this.useBlurredSymbols = useBlurredSymbols || false;
 
-  // Apply mask to container
   this.container.mask = this.mask;
 
-  // Create initial symbols
   for (var i = 0; i < positions + 1; i++) {
     var symbol = new PIXI.Sprite(PIXI.Texture.EMPTY);
     this.container.addChild(symbol);
@@ -48,11 +42,9 @@ const Reel = function({
   }
 };
 
-// Render method to update reel visuals
 Reel.prototype.render = function() {
   var _this = this;
 
-  // Update mask
   var m = _this.mask;
   m.x = _this.container.x;
   m.y = _this.container.y;
@@ -61,7 +53,6 @@ Reel.prototype.render = function() {
   m.drawRect(0 - this.maskPaddingX, 0 - this.maskPaddingY, _this.symbols[0].width + (this.maskPaddingX * 2), ((_this.symbols[0].height + this.symbolMargin + this.maskPaddingY) * _this.positions) - this.symbolMargin);
   m.endFill();
 
-  // Update symbol positions and textures
   for (var i = 0; i < _this.symbols.length; i++) {
     var symbol = _this.symbols[i];
     symbol.anchor.set(0.5, 0.5);
@@ -93,7 +84,6 @@ Reel.prototype.render = function() {
     symbol.y += symbolHeight / 2;
   }
 
-  // Handle rolling animation
   if (this.rolling) {
     this.offset += this.symbols[0].height * this.speed;
 
@@ -112,7 +102,6 @@ Reel.prototype.render = function() {
       this.values.splice(-1, 1);
     }
 
-    // Handle stopping animation
     if (this.stopping === this.positions + 1) {
       this.rolling = false;
       this.stopping++;
@@ -131,8 +120,7 @@ Reel.prototype.render = function() {
         },
         complete: function() {
           _this.stopping = false;
-          
-          // Execute stop functions
+
           for (let i = 0; i < _this.stopFns.length; i++) {
             const fn = _this.stopFns[i];
 
@@ -148,12 +136,10 @@ Reel.prototype.render = function() {
   }
 };
 
-// Start rolling the reel
 Reel.prototype.roll = function() {
   if (!this.rolling && this.stopping === false) {
     this.rolling = true;
 
-    // Execute start functions
     for (let i = 0; i < this.startFns.length; i++) {
       const fn = this.startFns[i];
 
@@ -166,31 +152,26 @@ Reel.prototype.roll = function() {
   }
 };
 
-// Stop the reel
 Reel.prototype.stop = function() {
   if (this.rolling && this.stopping === false) {
     this.stopping = 0;
   }
 };
 
-// Add a one-time stop function
 Reel.prototype.onceStop = function(fn) {
   fn.once = true;
   this.stopFns.push(fn);
 };
 
-// Add a recurring stop function
 Reel.prototype.onStop = function(fn) {
   this.stopFns.push(fn);
 };
 
-// Add a one-time start function
 Reel.prototype.onceStart = function(fn) {
   fn.once = true;
   this.startFns.push(fn);
 };
 
-// Add a recurring start function
 Reel.prototype.onStart = function(fn) {
   this.startFns.push(fn);
 };
