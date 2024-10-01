@@ -1,11 +1,8 @@
-// File path: /royalgames-main/src/features/slot/SlotGame.js
-
 import * as PIXI from 'pixi.js';
 import ReelsController from './ReelsController';
 import gsap from 'gsap';
 
 class SlotGame {
-  // Arrays to store callback functions for various game events
   onInitFns = [];
   onDestroyFns = [];
   onBalanceChangeFns = [];
@@ -29,7 +26,6 @@ class SlotGame {
     spinTime,
     spinTimeBetweenReels,
   }, socket) {
-    // Initialize game properties
     this.id = id;
     this.width = width;
     this.height = height;
@@ -45,25 +41,20 @@ class SlotGame {
     this.spinTimeBetweenReels = spinTimeBetweenReels;
     this.socket = socket;
 
-    // Set up PIXI renderer
     this.renderer = new PIXI.autoDetectRenderer({
       width: window.innerWidth,
       height: window.innerHeight,
       antialias: true,
     });
 
-    // Create main stage container
     this.stage = new PIXI.Container();
 
-    // Set up PIXI ticker for animations
     this.ticker = new PIXI.Ticker();
 
-    // Add render function to ticker
     this.ticker.add(() => {
       this.renderer.render(this.stage);
     });
 
-    // Initialize assets and sound assets
     this.assets = [];
     this.soundAssets = {
       reelsRun: new Audio(`/data/reels-run.mp3`),
@@ -72,11 +63,9 @@ class SlotGame {
       coinsEffect: new Audio(`/data/coins.mp3`),
     };
 
-    // Initialize arrays for sprites and texts
     this.sprites = [];
     this.texts = [];
 
-    // Set initial game state
     this._bet = 1;
     this.coinValueValues = [0.01, 0.03, 0.10, 0.20, 0.50];
     this._coinValueValueIndex = 0;
@@ -86,19 +75,15 @@ class SlotGame {
     this.creditsTweenCompleted = true;
   }
 
-  // Method to add init callback
   onInit(fn) {
     this.onInitFns.push(fn);
   }
 
-  // Method to add destroy callback
   onDestroy(fn) {
     this.onDestroyFns.push(fn);
   }
 
-  // Method to handle game resizing
   resize() {
-    // Calculate new dimensions while maintaining aspect ratio
     const gameRatio = this.width / this.height;
     const windowRatio = window.innerWidth / window.innerHeight;
     let width, height;
@@ -111,25 +96,19 @@ class SlotGame {
       width = height * gameRatio;
     }
 
-    // Resize renderer and scale stage
     this.renderer.resize(width, height);
 
     this.stage.scale.x = this.renderer.view.width / this.width;
     this.stage.scale.y = this.renderer.view.height / this.height;
   }
 
-  // Method to initialize the game
   init() {
-    // Initialize reels controller
     this.reelsController = new ReelsController(this, this.spinTime, this.spinTimeBetweenReels);
 
-    // Resize game to fit window
     this.resize();
 
-    // Call all init callbacks
     this.onInitFns.forEach((fn) => fn());
 
-    // Sort stage children by z-index
     this.stage.children.sort(function(a, b) {
       if (a.z > b.z) {
         return 1;
@@ -138,7 +117,6 @@ class SlotGame {
       }
     });
 
-    // Set up window resize listener
     const onWindowResize = () => {
       setTimeout(() => {
         this.resize();
@@ -147,12 +125,10 @@ class SlotGame {
 
     window.addEventListener('resize', onWindowResize);
 
-    // Add cleanup function for resize listener
     this.onDestroy(() => {
       window.removeEventListener('resize', onWindowResize);
     });
 
-    // Set up socket listeners for game state and bets
     this.onNetworkGamestate = (state) => {
       this.processGamestate(state);
     };
@@ -163,7 +139,6 @@ class SlotGame {
     };
     this.socket.on('bet', this.onNetworkBet);
 
-    // Set up ticker for text updates
     this.ticker.add(() => {
       this.texts.forEach((text) => {
         const t = text.text;
@@ -171,8 +146,7 @@ class SlotGame {
         text.text = t;
       });
     });
-    
-    // Set up ticker for autoplay
+
     this.ticker.add(() => {
       if (this.autoplay) {
         if (!this.reelsController.reelsActive) {
@@ -183,7 +157,6 @@ class SlotGame {
       }
     });
 
-    // Set up key press listener for play action
     this.onActionButtonPressed = (e) => {
       if (e.code === 'Space' || e.code === 'Numpad0') {
         this.play();
@@ -192,9 +165,7 @@ class SlotGame {
     window.addEventListener('keypress', this.onActionButtonPressed);
   }
 
-  // Method to start the game
   start() {
-    // Load assets and initialize game
     PIXI.Assets.addBundle(this.id, this.assets);
     PIXI.Assets.loadBundle(this.id, (progress) => {
       this.onLoadingFns.forEach((fn) => {
@@ -210,18 +181,15 @@ class SlotGame {
     });
   }
 
-  // Method to register loading callback
   onLoading(fn) {
     this.onLoadingFns.push(fn);
   }
 
-  // Method to handle play action
   play() {
     if (this.reelsController.reelsActive) {
-      // Handle stopping the reels
       if (this.betResponse) {
         this.reelsController.onStopCommandFns.forEach((fn) => fn());
-  
+
         if (this.reelsController.reels.some((r) => (r.rolling === true || r.stopping < r.positions + 1) && !(r.forceStopped || r.stoppedAutomatically))) {
           this.soundAssets.reelsRun.pause();
           new Audio(this.soundAssets.reelStop.src).play();
@@ -251,7 +219,6 @@ class SlotGame {
         }
       }
     } else {
-      // Handle starting a new spin
       this.socket.emit('bet', {
         key: localStorage.getItem('key'),
         gameId: this.id,
@@ -262,21 +229,21 @@ class SlotGame {
       this.betResponse = null;
       this.reelsController.stopCommandGiven = false;
       this.balance -= Math.round(this.betValue * 100) / 100;
-  
+
       this.reelsController.reels.forEach((r) => {
         r.stoppedAutomatically = false;
         r.forceStopped = false;
         r.roll();
-  
+
         r.onceStop(() => {
           if (!this.reelsController.reelsActive) {
             for (let i = 0; i < this.reelsController.onStopFns.length; i++) {
               const fn = this.reelsController.onStopFns[i];
-  
+
               if (fn.once) {
                 this.reelsController.onStopFns.splice(i--, 1);
               }
-              
+
               fn();
             }
           }
@@ -288,14 +255,14 @@ class SlotGame {
       this.soundAssets.reelsRun.loop = true;
       this.soundAssets.reelsRun.currentTime = 0;
       this.soundAssets.reelsRun.play();
-  
+
       for (let i = 0; i < this.reelsController.onStartFns.length; i++) {
         const fn = this.reelsController.onStartFns[i];
-  
+
         if (fn.once) {
           this.reelsController.onStartFns.splice(i--, 1);
         }
-  
+
         fn();
       }
 
@@ -310,18 +277,15 @@ class SlotGame {
     }
   }
 
-  // Method to register play callback
   onPlay(fn) {
     this.onPlayFns.push(fn);
   }
 
-  // Method to register one-time play callback
   oncePlay(fn) {
     fn.once = true;
     this.onPlay(fn);
   }
 
-  // Method to process game state from server
   processGamestate(state) {
     this.balance = state.balance;
     this.coinValueValueIndex = this.coinValueValues.indexOf(state.coinValue);
@@ -334,10 +298,9 @@ class SlotGame {
     this.ticker.start();
   }
 
-  // Method to process bet response from server
   processBet(data) {
     this.balance = data.balance;
-    
+
     data.reels.forEach((reelValues, i) => {
       this.reelsController.reels[i].stopValues = reelValues.slice();
     });
@@ -346,7 +309,7 @@ class SlotGame {
       let totalWin = 0;
       data.win.forEach((line) => totalWin += line.amount);
       this.balance -= totalWin;
-  
+
       const o = { balance: this.balance };
       this.creditsTweenCompleted = false;
       this.reelsController.onceStop(() => {
@@ -380,7 +343,6 @@ class SlotGame {
     }
   }
 
-  // Method to add resources to the game
   addResource(resource) {
     if (resource.constructor === Array) {
       this.assets = [
@@ -400,7 +362,6 @@ class SlotGame {
     }
   }
 
-  // Method to add sprite to the game
   addSprite(resourceKey) {
     const sprite = PIXI.Sprite.from(resourceKey);
 
@@ -410,7 +371,6 @@ class SlotGame {
     return sprite;
   }
 
-  // Method to add interactive button to the game
   addButton(resources, onClick) {
     const sprite = PIXI.Sprite.from(resources[0]);
     sprite.interactive = true;
@@ -450,7 +410,7 @@ class SlotGame {
         } else {
           sprite.texture = PIXI.Texture.from(resources[0]);
         }
-        
+
         isDown = false;
       }
     });
@@ -461,7 +421,6 @@ class SlotGame {
     return sprite;
   }
 
-  // Method to destroy the game
   destroy() {
     this.ticker.stop();
     this.stage.destroy();
@@ -472,68 +431,53 @@ class SlotGame {
     PIXI.Assets.unloadBundle(this.id);
   }
 
-  // Getter for current coin value
   get coinValue() {
     return this.coinValueValues[this.coinValueValueIndex];
   }
 
-  // Getter for current bet value
   get betValue() {
     return this.bet * 10 * this.coinValue;
   }
 
-  // Getter for formatted bet value
   get betValueToLocale() {
     return this.betValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  // Setter for balance
   set balance(value) {
     this._balance = value;
-    // Trigger all registered balance change callbacks
     this.onBalanceChangeFns.forEach((fn) => fn(this._balance));
   }
 
-  // Getter for balance
   get balance() {
     return this._balance;
   }
 
-  // Method to register balance change callback
   onBalanceChange(fn) {
     this.onBalanceChangeFns.push(fn);
   }
 
-  // Setter for bet
   set bet(value) {
     this._bet = value;
-    // Trigger all registered bet change callbacks
     this.onBetChangeFns.forEach((fn) => fn(this._bet));
   }
 
-  // Getter for bet
   get bet() {
     return this._bet;
   }
 
-  // Method to register bet change callback
   onBetChange(fn) {
     this.onBetChangeFns.push(fn);
   }
 
-  // Setter for coin value index
   set coinValueValueIndex(value) {
     this._coinValueValueIndex = value;
-    // Trigger all registered coin value change callbacks
     this.onCoinValueChangeFns.forEach((fn) => fn(this.coinValueValues[this._coinValueValueIndex]));
   }
 
-  // Getter for coin value index
   get coinValueValueIndex() {
     return this._coinValueValueIndex;
   }
 
-  // Method to register coin value change callback
   onCoinValueChange(fn) {
     this.onCoinValueChangeFns.push(fn);
   }

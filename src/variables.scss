@@ -1,36 +1,9 @@
-// File path: src/scss/variables.scss
-
-// Define a set of variables for styling the user interface
-// These variables are used to store values that can be reused throughout the stylesheet
-// to maintain consistency in the design
-
-// Background color of the application
-$background-color: #520645; // Dark purple color
-
-// Text color
-$text-color: #000000; // Black color
-
-// Background color of components (such as buttons, forms, etc.)
-$component-background-color: #FEFEFE; // Light gray color
-
-// Text color of components
-$component-text-color: #333; // Dark gray color
-
-// Box shadow effect for components
-$component-box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; // Black color with opacity 0.24, horizontal offset 0px, vertical offset 3px, blur radius 8px
-
-// Primary color of the application
-$primary-color: #FDAD00; // Bright orange color
-
-// Background color of buttons
-$button-background-color: #FDAD00; // Same as primary color
-
-// Text color of buttons
-$button-text-color: #000000; // Black color
-
-// Box shadow effect for buttons
+$background-color: #EFEFEF;
+$text-color: #222;
+$component-background-color: #FEFEFE;
+$component-text-color: #333;
+$component-box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+$primary-color: #FDAD00;
+$button-background-color: #FDAD00;
+$button-text-color: #EFEFEF;
 $button-box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
-// Multiple box shadows:
-// 1. Black color with opacity 0.4, horizontal offset 0px, vertical offset 2px, blur radius 4px
-// 2. Black color with opacity 0.3, horizontal offset 0px, vertical offset 7px, blur radius 13px, spread radius -3px
-// 3. Black color with opacity 0.2, horizontal offset 0px, vertical offset -3px, blur radius 0px, inset (shadow is drawn inside the element)

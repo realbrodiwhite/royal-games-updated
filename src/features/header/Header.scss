@@ -1,0 +1,119 @@
+@import "../../variables.scss";
+
+.Header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: $component-background-color;
+  box-shadow: $component-box-shadow;
+
+  .brand {
+    display: flex;
+    align-items: center;
+
+    .logo {
+      margin-right: 10px;
+    }
+
+    .name {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: $text-color;
+    }
+  }
+
+  .menu {
+    display: flex;
+    align-items: center;
+
+    .account {
+      position: relative;
+
+      .btn-toggle-account-menu {
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        color: $text-color;
+
+        span {
+          margin-left: 10px;
+        }
+      }
+
+      .account-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: $component-background-color;
+        box-shadow: $component-box-shadow;
+        border-radius: 4px;
+        overflow: hidden;
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            padding: 10px 20px;
+
+            a {
+              text-decoration: none;
+              color: $text-color;
+
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .btn-settings {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 20px;
+      color: $text-color;
+    }
+  }
+
+  .balance {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: $component-background-color;
+    box-shadow: $component-box-shadow;
+    color: $component-text-color;
+
+    .label {
+      font-size: 12px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .value {
+      margin-top: 3px;
+      font-weight: bold;
+    }
+  }
+}
+
+@media screen and (max-width: 374px) {
+  .Header {
+    flex-direction: column;
+
+    .menu {
+      margin-top: 20px;
+    }
+  }
+}

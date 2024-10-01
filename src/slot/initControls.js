@@ -1,247 +1,215 @@
-// File path: /royalgames-main/src/features/slot/initControls.js
+import * as PIXI from 'pixi.js';
+import gsap from 'gsap';
 
-import * as PIXI from 'pixi.js'; // Importing the PIXI.js library for rendering and animations
-import gsap from 'gsap'; // Importing GSAP for animation handling
+let onBtnTotalBetMinus, onBtnTotalBetPlus;
 
-let onBtnTotalBetMinus, onBtnTotalBetPlus; // Declaring variables for button event handlers
-
-// Main function to initialize game controls
 function initControls(game) {
-  // Hide the bet window when the reels start spinning
   game.reelsController.onStart(() => {
-    betWindow.visible = false; // Ensure betWindow is defined and accessible in this scope
+    betWindow.visible = false;
   });
 
-  // Create a main container for the game controls
-  const controls = new PIXI.Container(); // Creating a new PIXI container for controls
-  controls.z = 10; // Setting the z-index to make sure controls are on top
-  game.stage.addChild(controls); // Adding controls to the game stage
+  const controls = new PIXI.Container();
+  controls.z = 10;
+  game.stage.addChild(controls);
 
-  // Add information text to the controls
   const infoText = new PIXI.Text('HOLD SPACE FOR TURBO SPIN', new PIXI.TextStyle({
-    fontFamily: 'Archivo Black', // Font style
-    fontSize: 22, // Font size
-    fill: '#FFFFFF', // Text color
+    fontFamily: 'Archivo Black',
+    fontSize: 22,
+    fill: '#FFFFFF',
   }));
-  infoText.anchor.set(0.5, 0.5); // Centering the anchor point
-  infoText.x = 1280 / 2; // Positioning the text in the center of the screen
-  controls.addChild(infoText); // Adding text to the controls container
-  game.texts.push(infoText); // Keeping a reference to the text object in the game text array
+  infoText.anchor.set(0.5, 0.5);
+  infoText.x = 1280 / 2;
+  controls.addChild(infoText);
+  game.texts.push(infoText);
 
-  // Update info text based on spin count and reel activity
-  let spinCount = 0; // Initializing spin count
+  let spinCount = 0;
   game.reelsController.onStop(() => {
-    // Action to perform when the reels stop spinning
     if (++spinCount % 2 === 0) {
-      infoText.text = 'SPIN TO WIN!'; // Update text based on spin count
+      infoText.text = 'SPIN TO WIN!';
     } else {
-      infoText.text = 'PLACE YOUR BETS!'; // Alternate text based on spin count
+      infoText.text = 'PLACE YOUR BETS!';
     }
   });
 
-  // Updating text based on active reels state
   game.ticker.add(() => {
-    if (game.reelsController.reelsActive) { // When reels are active
-      infoText.text = 'GOOD LUCK!'; // Display "Good Luck" message
+    if (game.reelsController.reelsActive) {
+      infoText.text = 'GOOD LUCK!';
     }
   });
 
-  // Adding credits label and its value
   const creditsLabel = new PIXI.Text('CREDIT', {
     fontFamily: 'Archivo Black',
     fontSize: 20,
-    fill: '#FDAD00', // Color for credits label
+    fill: '#FDAD00',
   });
-  creditsLabel.x = 200; // Positioning credits label
-  controls.addChild(creditsLabel); // Adding credits label to controls
-  game.texts.push(creditsLabel); // Reference for later updates
+  creditsLabel.x = 200;
+  controls.addChild(creditsLabel);
+  game.texts.push(creditsLabel);
 
-  // Adding euro sign next to credits
   const creditsValueEuroSign = new PIXI.Text('€', {
     fontFamily: 'Archivo Black',
     fontSize: 20,
-    fill: '#FFFFFF', // Color for euro sign
+    fill: '#FFFFFF',
   });
-  creditsValueEuroSign.x = creditsLabel.x + creditsLabel.width + 20; // Positioning euro sign
-  creditsValueEuroSign.y = creditsLabel.y; // Aligning with the credits label
-  controls.addChild(creditsValueEuroSign); // Adding euro sign to controls
-  game.texts.push(creditsValueEuroSign); // Storing reference
+  creditsValueEuroSign.x = creditsLabel.x + creditsLabel.width + 20;
+  creditsValueEuroSign.y = creditsLabel.y;
+  controls.addChild(creditsValueEuroSign);
+  game.texts.push(creditsValueEuroSign);
 
-  // Adding credits value based on game balance
   const creditsValue = new PIXI.Text(game.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), {
     fontFamily: 'Archivo Black',
     fontSize: 20,
-    fill: '#FFFFFF', // Color for credit value
+    fill: '#FFFFFF',
   });
-  creditsValue.x = creditsValueEuroSign.x + creditsValueEuroSign.width + 5; // Positioning credits value
-  controls.addChild(creditsValue); // Adding credits value to controls
-  game.texts.push(creditsValue); // Storing reference
+  creditsValue.x = creditsValueEuroSign.x + creditsValueEuroSign.width + 5;
+  controls.addChild(creditsValue);
+  game.texts.push(creditsValue);
 
-  // Update credits value when the game's balance changes
   game.onBalanceChange((balance) => {
     creditsValue.text = balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   });
 
-  // Adding bet label and initial value display
   const betLabel = new PIXI.Text('BET', {
     fontFamily: 'Archivo Black',
     fontSize: 20,
-    fill: '#FDAD00', // Color for bet label
+    fill: '#FDAD00',
   });
-  betLabel.x = creditsLabel.x + creditsLabel.width - betLabel.width + 4; // Positioning bet label
-  betLabel.y = creditsLabel.y + betLabel.height + 5; // Below credits label
-  controls.addChild(betLabel); // Adding bet label to controls
-  game.texts.push(betLabel); // Reference for later updates
+  betLabel.x = creditsLabel.x + creditsLabel.width - betLabel.width + 4;
+  betLabel.y = creditsLabel.y + betLabel.height + 5;
+  controls.addChild(betLabel);
+  game.texts.push(betLabel);
 
-  // Adding euro sign next to bet value
   const betValueEuroSign = new PIXI.Text('€', {
     fontFamily: 'Archivo Black',
     fontSize: 20,
-    fill: '#FFFFFF', // Color for euro sign
+    fill: '#FFFFFF',
   });
-  betValueEuroSign.x = betLabel.x + betLabel.width + 16; // Positioning euro sign for bet value
-  betValueEuroSign.y = betLabel.y; // Aligning with the bet label
-  controls.addChild(betValueEuroSign); // Adding euro sign to controls
-  game.texts.push(betValueEuroSign); // Storing reference
+  betValueEuroSign.x = betLabel.x + betLabel.width + 16;
+  betValueEuroSign.y = betLabel.y;
+  controls.addChild(betValueEuroSign);
+  game.texts.push(betValueEuroSign);
 
-  // Adding bet value display based on game state
   const betValue = new PIXI.Text(game.betValueToLocale, {
     fontFamily: 'Archivo Black',
     fontSize: 20,
-    fill: '#FFFFFF', // Color for bet value
+    fill: '#FFFFFF',
   });
-  betValue.x = betValueEuroSign.x + betValueEuroSign.width + 5; // Positioning bet value
-  betValue.y = betLabel.y; // Aligning with the bet label
-  controls.addChild(betValue); // Adding bet value to controls
-  game.texts.push(betValue); // Storing reference
+  betValue.x = betValueEuroSign.x + betValueEuroSign.width + 5;
+  betValue.y = betLabel.y;
+  controls.addChild(betValue);
+  game.texts.push(betValue);
 
-  // Update bet value when it changes
   game.onBetChange(() => {
-    betValue.text = game.betValueToLocale; // Refreshing the displayed bet value
+    betValue.text = game.betValueToLocale;
   });
 
-  // Add win amount display container and its elements
   const winAmountContainer = new PIXI.Container();
-  winAmountContainer.visible = false; // Initially hidden
-  controls.addChild(winAmountContainer); // Adding to controls
+  winAmountContainer.visible = false;
+  controls.addChild(winAmountContainer);
 
   const winLabel = new PIXI.Text('WIN:', {
     fontFamily: 'Archivo Black',
     fontSize: 30,
-    fill: '#FDAD00', // Color for win label
+    fill: '#FDAD00',
   });
-  winAmountContainer.addChild(winLabel); // Adding win label to win amount container
-  game.texts.push(winLabel); // Storing reference
+  winAmountContainer.addChild(winLabel);
+  game.texts.push(winLabel);
 
-  // Win amount text field for displaying win amounts
   const winAmountText = new PIXI.Text('', {
     fontFamily: 'Archivo Black',
     fontSize: 30,
-    fill: '#FFFFFF', // Color for win amount
+    fill: '#FFFFFF',
   });
-  winAmountText.x = winLabel.width + 15; // Positioning to the right of win label
-  winAmountContainer.addChild(winAmountText); // Adding text field to container
-  game.texts.push(winAmountText); // Storing reference
+  winAmountText.x = winLabel.width + 15;
+  winAmountContainer.addChild(winAmountText);
+  game.texts.push(winAmountText);
 
-  // Update win amount display based on the bet response
   game.ticker.add(() => {
     if (game.betResponse && game.betResponse.isWin && !game.reelsController.reelsActive) {
-      infoText.visible = false; // Hide info text when there’s a win
-      winAmountContainer.visible = true; // Show win amount container
+      infoText.visible = false;
+      winAmountContainer.visible = true;
 
-      // Calculate total win amount from the responses
       let totalWinAmount = 0;
       game.betResponse.win.forEach((line) => {
-        totalWinAmount += line.amount; // Accumulate win amounts
+        totalWinAmount += line.amount;
       });
 
-      // Update the win amount text
       winAmountText.text = '€' + totalWinAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-      // Center the win amount display
       winAmountContainer.x = (1280 / 2) - (winAmountContainer.width / 2);
     } else {
-      winAmountContainer.visible = false; // Hide win amount container if not applicable
-      infoText.visible = true; // Show info text
+      winAmountContainer.visible = false;
+      infoText.visible = true;
     }
   });
 
-  // Add play button for starting gameplay
-  const btnPlay = PIXI.Sprite.from('spin-icon'); // Load play button icon
+  const btnPlay = PIXI.Sprite.from('spin-icon');
   btnPlay.scale.x = 0.3;
   btnPlay.scale.y = 0.3;
-  btnPlay.anchor.set(0.5, 0.5); // Centering the anchor for rotation
-  btnPlay.x = 1100 - btnPlay.width; // Positioned to the right
-  btnPlay.interactive = true; // Make button interactive
+  btnPlay.anchor.set(0.5, 0.5);
+  btnPlay.x = 1100 - btnPlay.width;
+  btnPlay.interactive = true;
   btnPlay.on('pointerdown', () => {
-    game.play(); // Callback to initiate play action
+    game.play();
   });
-  controls.addChild(btnPlay); // Adding button to the controls
+  controls.addChild(btnPlay);
 
-  // Update play button texture based on game state
   game.ticker.add(() => {
     if (game.reelsController.reelsActive || game.autoplay) {
-      btnPlay.texture = PIXI.Texture.from('stop-icon'); // Show stop icon when active
+      btnPlay.texture = PIXI.Texture.from('stop-icon');
     } else {
-      btnPlay.texture = PIXI.Texture.from('spin-icon'); // Show play icon when inactive
+      btnPlay.texture = PIXI.Texture.from('spin-icon');
     }
   });
 
-  // Add a circular background for the play button
-  const btnPlayCircle = PIXI.Sprite.from('circle-icon'); // Circular background
-  btnPlayCircle.x = btnPlay.x; // Center it with the play button
+  const btnPlayCircle = PIXI.Sprite.from('circle-icon');
+  btnPlayCircle.x = btnPlay.x;
   btnPlayCircle.y = btnPlay.y;
   btnPlayCircle.scale.x = 0.3;
   btnPlayCircle.scale.y = 0.3;
   btnPlayCircle.anchor.set(0.5, 0.5);
-  btnPlayCircle.interactive = true; // Make circle interactive
+  btnPlayCircle.interactive = true;
   btnPlayCircle.on('pointerdown', () => {
-    game.play(); // Start game on circle press
+    game.play();
   });
-  controls.addChild(btnPlayCircle); // Adding to controls
+  controls.addChild(btnPlayCircle);
   
-  // Animate the play button circle rotation
   let btnPlayCircleRotation = {
     value: 0.1,
   };
 
-  let btnPlayCircleRotationTween; // Variable for the rotation tween
+  let btnPlayCircleRotationTween;
   game.reelsController.onStart(() => {
-    // Start line to animate the circle when reels start rotating
     btnPlayCircleRotation.value = 0.1;
     btnPlayCircleRotationTween = gsap.to(btnPlayCircleRotation, { value: 0.001, duration: 2 });
   });
 
   game.reelsController.onStop(() => {
-    // Stop rotation tween when reels stop
     btnPlayCircleRotationTween.kill();
   });
 
   game.reelsController.onStopCommand(() => {
-    btnPlayCircleRotationTween.progress(1); // Complete the tween if appropriate
+    btnPlayCircleRotationTween.progress(1);
   });
 
   PIXI.Ticker.shared.add(() => {
-    if (game.reelsController.reelsActive) { // Rotate circle if reels are active
-      btnPlayCircle.rotation -= btnPlayCircleRotation.value; // Adjust rotation based on set value
+    if (game.reelsController.reelsActive) {
+      btnPlayCircle.rotation -= btnPlayCircleRotation.value;
     }
   });
 
-  // Animate play button rotation with GSAP timelines
   const btnPlayRotateTimeline = gsap.timeline({
-    repeat: -1, // Infinite loop
-    repeatDelay: 10, // Delay between repeats
-    delay: 10, // Initial delay before the first rotation
+    repeat: -1,
+    repeatDelay: 10,
+    delay: 10,
   });
 
-  // Rotate button
   btnPlayRotateTimeline.to(btnPlay, {
-    rotation: Math.PI / 4, // Rotate to 45 degrees
+    rotation: Math.PI / 4,
     duration: 0.5,
     ease: 'power1',
-  });
+  })
 
-  // Rotate back to normal
   btnPlayRotateTimeline.to(btnPlay, {
     rotation: 0,
     duration: 0.5,
@@ -249,48 +217,43 @@ function initControls(game) {
   });
 
   game.reelsController.onStart(() => {
-    btnPlayRotateTimeline.pause(); // Pause during reel start
-    btnPlayRotateTimeline.progress(0); // Restart animation
+    btnPlayRotateTimeline.pause();
+    btnPlayRotateTimeline.progress(0);
   });
 
   game.reelsController.onStop(() => {
     if (!game.reelsController.reelsActive) {
-      btnPlayRotateTimeline.restart(true); // Restart upon stopping
+      btnPlayRotateTimeline.restart(true);
     }
   });
 
-  // Add an autoplay button container
   const btnAutoplay = new PIXI.Container();
-  btnAutoplay.x = btnPlay.x; // Align with play button
+  btnAutoplay.x = btnPlay.x;
   btnAutoplay.y = 65;
-  btnAutoplay.interactive = true; // Make button interactive
-  btnAutoplay.on('pointerdown', () => { 
-    game.autoplay = !game.autoplay; // Toggle autoplay state
-  });
-  controls.addChild(btnAutoplay); // Adding to controls
+  btnAutoplay.interactive = true;
+  btnAutoplay.on('pointerdown', () => { game.autoplay = !game.autoplay; });
+  controls.addChild(btnAutoplay);
 
   const btnAutoplayBackground = new PIXI.Graphics();
-  btnAutoplay.addChild(btnAutoplayBackground); // Add background for styling
+  btnAutoplay.addChild(btnAutoplayBackground);
 
   const btnAutoplayText = new PIXI.Text('AUTOPLAY', new PIXI.TextStyle({
     fontFamily: 'Archivo Black',
     fontSize: 12,
-    fill: '#FFFFFF', // Color for autoplay text
+    fill: '#FFFFFF',
   }));
   btnAutoplayText.anchor.set(0.5, 0.5);
-  btnAutoplay.addChild(btnAutoplayText); // Adding to button
-  game.texts.push(btnAutoplayText); // Track text element for updates
+  btnAutoplay.addChild(btnAutoplayText);
+  game.texts.push(btnAutoplayText);
 
-  // Update autoplay button color based on the game state
   game.ticker.add(() => {
     if (game.autoplay) {
-      btnAutoplayText.tint = 0xB1071D; // Change color when active
+      btnAutoplayText.tint = 0xB1071D;
     } else {
-      btnAutoplayText.tint = 0xFFFFFF; // Default color
+      btnAutoplayText.tint = 0xFFFFFF;
     }
   });
 
-  // Style the autoplay button background
   const btnAutoplayTextPaddingX = 12;
   const btnAutoplayTextPaddingY = 2;
   btnAutoplayBackground.beginFill(0xFFFFFF, 1);
@@ -311,290 +274,268 @@ function initControls(game) {
   );
   btnAutoplayBackground.endFill();
 
-  // Add bet minus button
   const btnBetMinusCircle = new PIXI.Graphics();
   btnBetMinusCircle.beginFill(0x000000, 0.4);
-  btnBetMinusCircle.lineStyle(10, 0xFFFFFF); // Outline color
-  btnBetMinusCircle.drawEllipse(0, 0, 100, 100); // Draw ellipse for button shape
+  btnBetMinusCircle.lineStyle(10, 0xFFFFFF);
+  btnBetMinusCircle.drawEllipse(0, 0, 100, 100);
   btnBetMinusCircle.endFill();
   btnBetMinusCircle.scale.x = 0.22;
   btnBetMinusCircle.scale.y = 0.22;
-  btnBetMinusCircle.x = btnPlay.x - (btnPlay.width / 2) - btnBetMinusCircle.width; // Positioning
+  btnBetMinusCircle.x = btnPlay.x - (btnPlay.width / 2) - btnBetMinusCircle.width;
   btnBetMinusCircle.y = btnPlay.y + (btnPlay.height / 2) - (btnBetMinusCircle.height / 2) + 10;
-  btnBetMinusCircle.interactive = true; // Make button interactive
+  btnBetMinusCircle.interactive = true;
   btnBetMinusCircle.on('pointerdown', () => {
-    onBtnTotalBetMinus(); // Trigger the decrease bet function
-    betWindow.visible = true; // Show the bet window
+    onBtnTotalBetMinus();
+    betWindow.visible = true;
   });
-  controls.addChild(btnBetMinusCircle); // Adding to controls
+  controls.addChild(btnBetMinusCircle);
 
-  const btnBetMinus = PIXI.Sprite.from('minus-icon'); // Load minus icon for button
+  const btnBetMinus = PIXI.Sprite.from('minus-icon');
   btnBetMinus.scale.x = 0.3;
   btnBetMinus.scale.y = 0.3;
-  btnBetMinus.anchor.set(0.5, 0.5); // Centering the icon
-  btnBetMinusCircle.addChild(btnBetMinus); // Adding icon to circle button
+  btnBetMinus.anchor.set(0.5, 0.5);
+  btnBetMinusCircle.addChild(btnBetMinus);
 
-  // Add bet plus button
   const btnBetPlusCircle = new PIXI.Graphics();
   btnBetPlusCircle.beginFill(0x000000, 0.4);
-  btnBetPlusCircle.lineStyle(10, 0xFFFFFF); // Outline color
-  btnBetPlusCircle.drawEllipse(0, 0, 100, 100); // Draw ellipse for button shape
+  btnBetPlusCircle.lineStyle(10, 0xFFFFFF);
+  btnBetPlusCircle.drawEllipse(0, 0, 100, 100);
   btnBetPlusCircle.endFill();
   btnBetPlusCircle.scale.x = 0.22;
   btnBetPlusCircle.scale.y = 0.22;
-  btnBetPlusCircle.x = btnPlay.x + (btnPlay.width / 2) + btnBetPlusCircle.width; // Position
+  btnBetPlusCircle.x = btnPlay.x + (btnPlay.width / 2) + btnBetPlusCircle.width;
   btnBetPlusCircle.y = btnPlay.y + (btnPlay.height / 2) - (btnBetPlusCircle.height / 2) + 10;
-  btnBetPlusCircle.interactive = true; // Make button interactive
+  btnBetPlusCircle.interactive = true;
   btnBetPlusCircle.on('pointerdown', () => {
-    onBtnTotalBetPlus(); // Trigger the increase bet function
-    betWindow.visible = true; // Show the bet window
+    onBtnTotalBetPlus();
+    betWindow.visible = true;
   });
-  controls.addChild(btnBetPlusCircle); // Adding to controls
+  controls.addChild(btnBetPlusCircle);
 
-  const btnBetPlus = PIXI.Sprite.from('plus-icon'); // Load plus icon for button
-  btnBetPlus.anchor.set(0.5, 0.5); // Centering the icon
+  const btnBetPlus = PIXI.Sprite.from('plus-icon');
+  btnBetPlus.anchor.set(0.5, 0.5);
   btnBetPlus.scale.x = 0.3;
   btnBetPlus.scale.y = 0.3;
-  btnBetPlusCircle.addChild(btnBetPlus); // Adding icon to circle button
+  btnBetPlusCircle.addChild(btnBetPlus);
 
-  // Initialize bet window function
-  function initBetWindow(game, controls, betValue) {
-    const container = new PIXI.Container(); // Container for the bet window
-    container.x = 850; // Initial position on the x-axis
-    container.y = -500; // Initial position on the y-axis
-    controls.addChild(container); // Adding the container to controls
+  const betWindow = initBetWindow(game, controls, betValue);
+  betWindow.visible = false;
 
-    // Create background for the bet window
-    const background = new PIXI.Graphics();
-    background.beginFill(0x000000, 0.9); // Semi-transparent background
-    background.drawRoundedRect(0, 0, 280, 400, 10); // Creating a rounded rectangle
-    background.endFill();
-    container.addChild(background); // Adding background to container
-
-    // Create a button to close the bet window
-    const btnClose = PIXI.Sprite.from('xmark-icon'); // Load close icon
-    btnClose.scale.set(0.07, 0.07); // Scaling the icon
-    btnClose.x = container.width - btnClose.width - 10; // Positioning close button
-    btnClose.y = 5; // Positioning on y-axis
-    btnClose.interactive = true; // Make close button interactive
-    btnClose.on('pointerdown', () => {
-      container.visible = false; // Hide the bet window on close
-    });
-    container.addChild(btnClose); // Adding close button to container
-
-    // Adding bet multiplier text to the bet window
-    const betMultiplerText = new PIXI.Text('BET MULTIPLIER 10x', {
-      fontFamily: 'Archivo Black',
-      fontSize: 15,
-      fill: '#FDAD00', // Color for the bet multiplier
-    });
-    betMultiplerText.anchor.set(0.5, 0); // Aligning text
-    betMultiplerText.x = container.width / 2; // Center horizontally within the container
-    betMultiplerText.y = 20; // Positioning vertically
-    container.addChild(betMultiplerText); // Adding to container
-    game.texts.push(betMultiplerText); // Track text for updates
-
-    // Create bet value adjustment tool
-    const betValueTool = createBetTool(game, 'BET');
-    betValueTool.container.x = 0;
-    betValueTool.container.y = betMultiplerText.y + betMultiplerText.height + 50; // Positioning below multiplier
-    container.addChild(betValueTool.container); // Adding to container
-    betValueTool.valueText.text = game.bet; // Display current bet
-
-    // Decrease bet value on button press
-    betValueTool.btnMinus.on('pointerdown', () => {
-      if (game.bet > 1) { // Check to ensure a negative bet doesn't occur
-        game.bet -= 1; // Decrement bet value
-        betValueTool.valueText.text = game.bet; // Update displayed bet
-        betValue.text = game.betValueToLocale; // Update bet value display
-        totalBetTool.valueText.text = '€' + game.betValueToLocale; // Update total bet display
-      }
-    });
-
-    // Increase bet value on button press
-    betValueTool.btnPlus.on('pointerdown', () => {
-      if (game.bet < 10) { // Check upper limit for bet
-        game.bet += 1; // Increment bet value
-        betValueTool.valueText.text = game.bet; // Update displayed bet
-        betValue.text = game.betValueToLocale; // Update bet value display
-        totalBetTool.valueText.text = '€' + game.betValueToLocale; // Update total bet display
-      }
-    });
-
-    // Create a coin value adjustment tool
-    const coinValueTool = createBetTool(game, 'COIN VALUE');
-    coinValueTool.container.x = 0;
-    coinValueTool.container.y = betValueTool.container.y + betValueTool.container.height + 30; // Position below bet tool
-    container.addChild(coinValueTool.container); // Add to container
-    coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2); // Display current coin value
-
-    // Decrement coin value on button press
-    coinValueTool.btnMinus.on('pointerdown', () => {
-      if (game.coinValueValueIndex > 0) { // Ensure not dropping below minimum index
-        game.coinValueValueIndex--; // Adjust index for tree/array of values
-        coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2); // Update coin value display
-        betValue.text = game.betValueToLocale; // Update bet value display
-        totalBetTool.valueText.text = '€' + game.betValueToLocale; // Update total bet
-      }
-    });
-
-    // Increment coin value on button press
-    coinValueTool.btnPlus.on('pointerdown', () => {
-      if (game.coinValueValueIndex < game.coinValueValues.length - 1) { // Ensure not exceeding maximum index
-        game.coinValueValueIndex++; // Adjust index to next value
-        coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2); // Update coin value display
-        betValue.text = game.betValueToLocale; // Update bet value display
-        totalBetTool.valueText.text = '€' + game.betValueToLocale; // Update total bet display
-      }
-    });
-
-    // Create the total bet adjustment tool
-    const totalBetTool = createBetTool(game, 'TOTAL BET');
-    totalBetTool.container.x = 0;
-    totalBetTool.container.y = coinValueTool.container.y + coinValueTool.container.height + 30; // Position below coin value
-    container.addChild(totalBetTool.container); // Adding to container
-    totalBetTool.valueText.text = '€' + game.betValueToLocale; // Initialize displayed total bet
-
-    // Handle bet decrement
-    onBtnTotalBetMinus = () => {
-      let betDecreased = false;
-
-      let b = game.bet, cvvi = game.coinValueValueIndex, tb;
-      while (!betDecreased && (b > 1 || cvvi > 0)) {
-        if (b === 1) {
-          if (cvvi > 0) {
-            cvvi--; // Move to previous coin value
-            b = 10; // Max back to 10 for next loop
-          }
-        } else {
-          b--; // Decrement bet
-        }
-
-        tb = b * 10 * game.coinValueValues[cvvi]; // Calculate total bet value
-        const currentBet = game.betValue; // Current total bet
-        betDecreased = tb < currentBet; // Check if decreased bet is accepted
-      }
-
-      game.bet = b; // Set the final bet value in game
-      game.coinValueValueIndex = cvvi; // Update coin value index
-
-      // Update display fields
-      betValueTool.valueText.text = game.bet;
-      coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2);
-      totalBetTool.valueText.text = '€' + game.betValueToLocale;
-      betValue.text = game.betValueToLocale;
-    };
-
-    totalBetTool.btnMinus.on('pointerdown', onBtnTotalBetMinus); // Attach event handler for minus button
-
-    // Handle bet increment
-    onBtnTotalBetPlus = () => {
-      let betIncreased = false;
-
-      let b = game.bet, cvvi = game.coinValueValueIndex, tb;
-      while (!betIncreased && (b < 10 || cvvi < game.coinValueValues.length - 1)) {
-        if (b === 10) {
-          if (cvvi < game.coinValueValues.length - 1) {
-            cvvi++; // Move to next coin value
-            b = 1; // Reset bet
-          }
-        } else {
-          b++; // Increment bet
-        }
-
-        tb = b * 10 * game.coinValueValues[cvvi]; // Calculate total bet value
-        const currentBet = game.betValue; // Current total bet
-        betIncreased = tb > currentBet; // Check if increased bet is accepted
-      }
-
-      game.bet = b; // Set the final bet value in game
-      game.coinValueValueIndex = cvvi; // Update coin value index
-
-      // Update display fields
-      betValueTool.valueText.text = game.bet;
-      coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2);
-      totalBetTool.valueText.text = '€' + game.betValueToLocale;
-      betValue.text = game.betValueToLocale;
-    };
-    totalBetTool.btnPlus.on('pointerdown', onBtnTotalBetPlus); // Attach event handler for plus button
-
-    return container; // Return the bet window container for use
-  }
-
-  // Helper function to create bet adjustment tools
-  function createBetTool(game, label) {
-    const container = new PIXI.Container(); // Create a container for the tool
-
-    // Create label for the tool
-    const labelText = new PIXI.Text(label, {
-      fontFamily: 'Archivo Black',
-      fontSize: 15,
-      fill: '#FFFFFF', // Color for the label
-    });
-    labelText.anchor.set(0.5, 0.5); // Set anchor for centering
-    container.addChild(labelText); // Add label to container
-    game.texts.push(labelText); // Store for future updates
-
-    // Create minus button
-    const btnMinusCircle = new PIXI.Graphics();
-    btnMinusCircle.beginFill(0xFFFFFF); // Color for the button
-    btnMinusCircle.drawCircle(0, 0, 25); // Draw circle for button shape
-    btnMinusCircle.x = btnMinusCircle.width; // Position to the right of the label
-    btnMinusCircle.y = labelText.height + 30; // Position below the label
-    btnMinusCircle.interactive = true; // Make the button interactive
-    container.addChild(btnMinusCircle); // Add to container
-
-    const btnMinusIcon = PIXI.Sprite.from('minus-icon'); // Load minus icon
-    btnMinusIcon.scale.set(0.07, 0.07); // Scale the icon
-    btnMinusIcon.anchor.set(0.5, 0.5); // Center the icon
-    btnMinusIcon.tint = 0x333333; // Set tint color for the icon
-    btnMinusCircle.addChild(btnMinusIcon); // Add icon to minus button
-
-    // Create value display for the bet
-    const valueBackgroundBorder = new PIXI.Graphics();
-    valueBackgroundBorder.beginFill(0x444444);
-    valueBackgroundBorder.drawRoundedRect(0, 0, 100, 50, 5); // Create a rounded rectangle for the value display
-    valueBackgroundBorder.endFill();
-    valueBackgroundBorder.x = btnMinusCircle.x + (btnMinusCircle.width / 2) + 15; // Position next to minus button
-    valueBackgroundBorder.y = btnMinusCircle.y - (btnMinusCircle.height / 2); // Center vertically
-    container.addChild(valueBackgroundBorder); // Adding background to display
-
-    const valueBackground = new PIXI.Graphics();
-    valueBackground.beginFill(0x222222);
-    valueBackground.drawRoundedRect(3, 3, 94, 44, 5); // Inner background styling
-    valueBackground.endFill();
-    valueBackgroundBorder.addChild(valueBackground); // Add inner background to the border
-
-    const valueText = new PIXI.Text('', {
-      fontFamily: 'Google Sans',
-      fontWeight: 800,
-      fontSize: 16,
-      fill: '#FFFFFF', // Color for the value text
-    });
-    valueText.anchor.set(0.5, 0.5); // Center the text
-    valueText.x = valueBackgroundBorder.width / 2; // Center horizontally
-    valueText.y = valueBackgroundBorder.height / 2; // Center vertically
-    valueBackgroundBorder.addChild(valueText); // Add to border
-    game.texts.push(valueText); // Store for updates
-
-    // Create plus button
-    const btnPlusCircle = new PIXI.Graphics();
-    btnPlusCircle.beginFill(0x00B862); // Color for plus button
-    btnPlusCircle.drawCircle(0, 0, 25); // Draw circle button
-    btnPlusCircle.x = valueBackgroundBorder.x + valueBackgroundBorder.width + (btnPlusCircle.width / 2) + 15; // Position
-    btnPlusCircle.y = btnMinusCircle.y; // Align with the minus button
-    btnPlusCircle.interactive = true; // Make the button interactive
-    container.addChild(btnPlusCircle); // Adding plus button to container
-
-    const btnPlusIcon = PIXI.Sprite.from('plus-icon'); // Load plus icon
-    btnPlusIcon.scale.set(0.07, 0.07); // Scale the icon
-    btnPlusIcon.anchor.set(0.5, 0.5); // Center the icon
-    btnPlusIcon.tint = 0xFFFFFF; // Set tint color for the icon
-    btnPlusCircle.addChild(btnPlusIcon); // Add icon to the plus button
-
-    labelText.x = valueBackgroundBorder.x + (valueBackgroundBorder.width / 2); // Center label text in the tool
-
-    return { container, valueText, btnMinus: btnMinusCircle, btnPlus: btnPlusCircle }; // Return relevant tools
-  }
+  return controls;
 }
-export default initControls; // Export the main function for use in other modules
+
+function initBetWindow(game, controls, betValue) {
+  const container = new PIXI.Container();
+  container.x = 850;
+  container.y = -500;
+  controls.addChild(container);
+
+  const background = new PIXI.Graphics();
+  background.beginFill(0x000000, 0.9);
+  background.drawRoundedRect(0, 0, 280, 400, 10);
+  background.endFill();
+  container.addChild(background);
+
+  const btnClose = PIXI.Sprite.from('xmark-icon');
+  btnClose.scale.set(0.07, 0.07);
+  btnClose.x = container.width - btnClose.width - 10;
+  btnClose.y = 5;
+  btnClose.interactive = true;
+  btnClose.on('pointerdown', () => {
+    container.visible = false;
+  });
+  container.addChild(btnClose);
+
+  const betMultiplerText = new PIXI.Text('BET MULTIPLIER 10x', {
+    fontFamily: 'Archivo Black',
+    fontSize: 15,
+    fill: '#FDAD00',
+  });
+  betMultiplerText.anchor.set(0.5, 0);
+  betMultiplerText.x = container.width / 2;
+  betMultiplerText.y = 20;
+  container.addChild(betMultiplerText);
+  game.texts.push(betMultiplerText);
+
+  const betValueTool = createBetTool(game, 'BET');
+  betValueTool.container.x = 0;
+  betValueTool.container.y = betMultiplerText.y + betMultiplerText.height + 50;
+  container.addChild(betValueTool.container);
+  betValueTool.valueText.text = game.bet;
+  betValueTool.btnMinus.on('pointerdown', function() {
+    if (game.bet > 1) {
+      game.bet -= 1;
+      betValueTool.valueText.text = game.bet;
+      betValue.text = game.betValueToLocale;
+      totalBetTool.valueText.text = '€' + game.betValueToLocale;
+    }
+  });
+  betValueTool.btnPlus.on('pointerdown', function() {
+    if (game.bet < 10) {
+      game.bet += 1;
+      betValueTool.valueText.text = game.bet;
+      betValue.text = game.betValueToLocale;
+      totalBetTool.valueText.text = '€' + game.betValueToLocale;
+    }
+  });
+
+  const coinValueTool = createBetTool(game, 'COIN VALUE');
+  coinValueTool.container.x = 0;
+  coinValueTool.container.y = betValueTool.container.y + betValueTool.container.height + 30;
+  container.addChild(coinValueTool.container);
+  coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2);
+  coinValueTool.btnMinus.on('pointerdown', function() {
+    if (game.coinValueValueIndex > 0) {
+      game.coinValueValueIndex--;
+      coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2);
+      betValue.text = game.betValueToLocale;
+      totalBetTool.valueText.text = '€' + game.betValueToLocale;
+    }
+  });
+  coinValueTool.btnPlus.on('pointerdown', function() {
+    if (game.coinValueValueIndex < game.coinValueValues.length - 1) {
+      game.coinValueValueIndex += 1;
+      coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2);
+      betValue.text = game.betValueToLocale;
+      totalBetTool.valueText.text = '€' + game.betValueToLocale;
+    }
+  });
+
+  const totalBetTool = createBetTool(game, 'TOTAL BET');
+  totalBetTool.container.x = 0;
+  totalBetTool.container.y = coinValueTool.container.y + coinValueTool.container.height + 30;
+  container.addChild(totalBetTool.container);
+  totalBetTool.valueText.text = '€' + game.betValueToLocale;
+  onBtnTotalBetMinus = function() {
+    let betDecreased = false;
+
+    let b = game.bet, cvvi = game.coinValueValueIndex, tb;
+    while (!betDecreased && (b > 1 || cvvi > 0)) {
+      if (b === 1) {
+        if (cvvi > 0) {
+          cvvi--;
+          b = 10;
+        }
+      } else {
+        b--;
+      }
+
+      tb = b * 10 * game.coinValueValues[cvvi];
+      const currentBet = game.betValue;
+      betDecreased = tb < currentBet;
+    }
+
+    game.bet = b;
+    game.coinValueValueIndex = cvvi;
+
+    betValueTool.valueText.text = game.bet;
+    coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2);
+    totalBetTool.valueText.text = '€' + game.betValueToLocale;
+    betValue.text = game.betValueToLocale;
+  };
+  totalBetTool.btnMinus.on('pointerdown', onBtnTotalBetMinus);
+
+  onBtnTotalBetPlus = function() {
+    let betIncreased = false;
+
+    let b = game.bet, cvvi = game.coinValueValueIndex, tb;
+    while (!betIncreased && (b < 10 || cvvi < game.coinValueValues.length - 1)) {
+      if (b === 10) {
+        if (cvvi < game.coinValueValues.length - 1) {
+          cvvi++;
+          b = 1;
+        }
+      } else {
+        b++;
+      }
+
+      tb = b * 10 * game.coinValueValues[cvvi];
+      const currentBet = game.betValue;
+      betIncreased = tb > currentBet;
+    }
+
+    game.bet = b;
+    game.coinValueValueIndex = cvvi;
+
+    betValueTool.valueText.text = game.bet;
+    coinValueTool.valueText.text = '€' + game.coinValue.toFixed(2);
+    totalBetTool.valueText.text = '€' + game.betValueToLocale;
+    betValue.text = game.betValueToLocale;
+  };
+  totalBetTool.btnPlus.on('pointerdown', onBtnTotalBetPlus);
+
+  return container;
+}
+
+function createBetTool(game, label) {
+  const container = new PIXI.Container();
+
+  const labelText = new PIXI.Text(label, {
+    fontFamily: 'Archivo Black',
+    fontSize: 15,
+    fill: '#FFFFFF',
+  });
+  labelText.anchor.set(0.5, 0.5);
+  container.addChild(labelText);
+  game.texts.push(labelText);
+
+  const btnMinusCircle = new PIXI.Graphics();
+  btnMinusCircle.beginFill(0xFFFFFF);
+  btnMinusCircle.drawCircle(0, 0, 25);
+  btnMinusCircle.x = btnMinusCircle.width;
+  btnMinusCircle.y = labelText.height + 30;
+  btnMinusCircle.interactive = true;
+  container.addChild(btnMinusCircle);
+
+  const btnMinusIcon = PIXI.Sprite.from('minus-icon');
+  btnMinusIcon.scale.set(0.07, 0.07);
+  btnMinusIcon.anchor.set(0.5, 0.5);
+  btnMinusIcon.tint = 0x333333;
+  btnMinusCircle.addChild(btnMinusIcon);
+
+  const valueBackgroundBorder = new PIXI.Graphics();
+  valueBackgroundBorder.beginFill(0x444444);
+  valueBackgroundBorder.drawRoundedRect(0, 0, 100, 50, 5);
+  valueBackgroundBorder.endFill();
+  valueBackgroundBorder.x = btnMinusCircle.x + (btnMinusCircle.width / 2) + 15;
+  valueBackgroundBorder.y = btnMinusCircle.y - (btnMinusCircle.height / 2);
+  container.addChild(valueBackgroundBorder);
+
+  const valueBackground = new PIXI.Graphics();
+  valueBackground.beginFill(0x222222);
+  valueBackground.drawRoundedRect(3, 3, 94, 44, 5);
+  valueBackground.endFill();
+  valueBackgroundBorder.addChild(valueBackground);
+
+  const valueText = new PIXI.Text('', {
+    fontFamily: 'Google Sans',
+    fontWeight: 800,
+    fontSize: 16,
+    fill: '#FFFFFF',
+  });
+  valueText.anchor.set(0.5, 0.5);
+  valueText.x = valueBackgroundBorder.width / 2;
+  valueText.y = valueBackgroundBorder.height / 2;
+  valueBackgroundBorder.addChild(valueText);
+  game.texts.push(valueText);
+
+  const btnPlusCircle = new PIXI.Graphics();
+  btnPlusCircle.beginFill(0x00B862);
+  btnPlusCircle.drawCircle(0, 0, 25);
+  btnPlusCircle.x = valueBackgroundBorder.x + valueBackgroundBorder.width + (btnPlusCircle.width / 2) + 15;
+  btnPlusCircle.y = btnMinusCircle.y;
+  btnPlusCircle.interactive = true;
+  container.addChild(btnPlusCircle);
+
+  const btnPlusIcon = PIXI.Sprite.from('plus-icon');
+  btnPlusIcon.scale.set(0.07, 0.07);
+  btnPlusIcon.anchor.set(0.5, 0.5);
+  btnPlusIcon.tint = 0xFFFFFF;
+  btnPlusCircle.addChild(btnPlusIcon);
+
+  labelText.x = valueBackgroundBorder.x + (valueBackgroundBorder.width / 2);
+
+  return { container, valueText, btnMinus: btnMinusCircle, btnPlus: btnPlusCircle };
+}
+
+export default initControls;
