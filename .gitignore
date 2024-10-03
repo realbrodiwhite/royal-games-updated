@@ -27,6 +27,7 @@ poetry.lock
 /coverage
 
 /build
+/server/node_modules
 
 .env.local
 .env.development.local
