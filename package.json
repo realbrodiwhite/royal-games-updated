@@ -46,7 +46,13 @@
     "sqlite3": "^5.1.7",
     "stripe": "^17.0.0",
     "web-vitals": "^4.0.0",
+<<<<<<< HEAD
     "workbox-background-sync": "^7.1.0"
+=======
+    "workbox-background-sync": "^7.1.0",
+    "react-app-rewired": "^2.2.1",
+    "customize-cra": "*"
+>>>>>>> 3895dd453b393e88f2c13ece9fca24f687be85c2
   },
   "scripts": {
     "start": "react-app-rewired start",
