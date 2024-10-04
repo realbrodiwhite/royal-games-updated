@@ -20,14 +20,10 @@ poetry.lock
 .DS_Store
 *.log
 
-/node_modules
 /.pnp
 .pnp.js
 
 /coverage
-
-/build
-/server/node_modules
 
 .env.local
 .env.development.local
