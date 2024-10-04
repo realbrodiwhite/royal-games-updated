@@ -24,7 +24,7 @@
     "@reduxjs/toolkit": "*",
     "@sideway/address": "^5.0.0",
     "@stripe/react-stripe-js": "2.8.0",
-    "@stripe/stripe-js": "4.6.0",
+    "@stripe/stripe-js": "4.7.0",
     "@testing-library/jest-dom": "^6.1.3",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.4.3",
