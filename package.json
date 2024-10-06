@@ -1,6 +1,6 @@
 {
   "name": "royal-games",
-  "version": "0.2.0",
+  "version": "0.2.01",
   "private": true,
   "dependencies": {
     "@babel/eslint-parser": "^7.22.10",
@@ -30,7 +30,6 @@
     "@testing-library/user-event": "^14.4.3",
     "animejs": "^3.2.2",
     "axios": "^1.5.1",
-    "customize-cra": "*",
     "eslint-webpack-plugin": "*",
     "express-validator": "^7.0.1",
     "gsap": "^3.12.2",
@@ -46,14 +45,13 @@
     "sqlite3": "^5.1.7",
     "stripe": "^17.0.0",
     "web-vitals": "^4.0.0",
-    "workbox-background-sync": "^7.1.0",
-    "react-app-rewired": "^2.2.1",
-    "customize-cra": "*"
+    "workbox-background-sync": "^7.1.0"
   },
+  {
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test"
   },
   "eslintConfig": {
     "extends": [
